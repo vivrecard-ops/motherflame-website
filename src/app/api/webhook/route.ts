@@ -1,6 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { stripe, generateLicenseKey } from "@/lib/stripe";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { supabaseAdmin as _supabaseAdmin } from "@/lib/supabase/admin";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const supabaseAdmin = _supabaseAdmin as any;
 import { sendLicenseEmail } from "@/lib/email";
 import type Stripe from "stripe";
 

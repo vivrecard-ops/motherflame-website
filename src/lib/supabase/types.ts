@@ -19,7 +19,12 @@ export interface Database {
         Row: License;
         Insert: Omit<License, "id" | "created_at" | "updated_at">;
         Update: Partial<Omit<License, "id" | "created_at">>;
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }
