@@ -39,7 +39,8 @@ export async function POST(request: NextRequest) {
         if (subscriptionId) {
           try {
             const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-            const raw = (subscription as Record<string, unknown>).current_period_end;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const raw = (subscription as any).current_period_end;
             periodEnd =
               typeof raw === "number" && raw > 0
                 ? new Date(raw * 1000).toISOString()
@@ -76,7 +77,8 @@ export async function POST(request: NextRequest) {
                 ? "cancelled"
                 : "expired";
 
-        const rawEnd = (sub as Record<string, unknown>).current_period_end;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const rawEnd = (sub as any).current_period_end;
         await supabaseAdmin
           .from("licenses")
           .update({
