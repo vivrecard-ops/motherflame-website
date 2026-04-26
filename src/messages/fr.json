@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "title": "MotherFlame — Track",
+    "description": "Traque tes parties de One Piece TCG, analyse tes performances et maîtrise la méta."
+  },
+  "nav": {
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs",
+    "download": "Téléchargement gratuit"
+  },
+  "hero": {
+    "badge": "Pensé pour les joueurs OPTCG",
+    "title": "Traque tes parties.",
+    "titleAccent": "Maîtrise la méta.",
+    "subtitle": "MotherFlame est l'app desktop gratuite pour les joueurs de One\u00A0Piece\u00A0TCG. Enregistre chaque partie, analyse tes stats et écrase tes adversaires avec des données.",
+    "downloadCta": "Télécharger pour Windows — Gratuit",
+    "downloadNote": "Windows 10/11 · Aucun compte requis",
+    "pricingCta": "Débloquer l'onglet Méta",
+    "pricingNote": "3,99€/mois · Annulation à tout moment"
+  },
+  "stats": {
+    "matches": "parties trackées par la communauté",
+    "free": "Gratuit pour toujours",
+    "platform": "Windows"
+  },
+  "showcase": {
+    "title": "L'app en action",
+    "subtitle": "Quatre onglets. Chaque détail de tes parties, sous les yeux.",
+    "unlockCta": "Débloque l'onglet Méta pour y accéder"
+  },
+  "features": {
+    "title": "Tout ce qu'il faut pour progresser",
+    "subtitle": "Quatre outils puissants dans une seule app. Trois sont entièrement gratuits.",
+    "items": [
+      {
+        "icon": "bar-chart",
+        "title": "Statistiques de parties",
+        "description": "Identifie où tu perds le plus, que tu commences en premier ou en deuxième, face à certains leaders, et suis ta progression réelle partie après partie. Ajoute des notes après chaque match et consulte tes sessions pour savoir exactement sur quoi travailler.",
+        "badge": "Gratuit"
+      },
+      {
+        "icon": "scroll",
+        "title": "Historique tour par tour",
+        "description": "Consulte ta main de départ pour voir si ton ouverture était jouable, puis parcours la partie complète avec chaque carte déployée et chaque attaque enregistrée. Tes notes prises en fin de partie sont sauvegardées avec, pour vraiment progresser à chaque session.",
+        "badge": "Gratuit"
+      },
+      {
+        "icon": "grid",
+        "title": "Matrice des matchups",
+        "description": "Aie une vue globale de tes résultats contre chaque leader de la méta. Consulte ton win rate en premier et en deuxième séparément pour chaque matchup, et identifie rapidement lesquels travailler en priorité.",
+        "badge": "Gratuit"
+      },
+      {
+        "icon": "crown",
+        "title": "Stats Méta",
+        "description": "Alimenté par plus d'un million de parties et mis à jour chaque jour, l'onglet Méta te dit quels decks dominent la méta actuelle et te propose les listes les plus jouées pour chaque leader. Copie n'importe quelle liste en un clic et colle-la directement sur le simulateur pour la tester.",
+        "badge": "Méta"
+      }
+    ]
+  },
+  "metaTeaser": {
+    "label": "ONGLET MÉTA — PREMIUM",
+    "title": "L'avantage compétitif.",
+    "subtitle": "L'onglet Méta agrège les données de plus d'1 000 000 de parties jouées sur le simulateur. Sache quels leaders dominent, comment les battre, et quelles decklists les meilleurs joueurs utilisent.",
+    "stat1Value": "1 063 064+",
+    "stat1Label": "parties agrégées",
+    "stat2Value": "Mis à jour",
+    "stat2Label": "quotidiennement",
+    "stat3Value": "Tous",
+    "stat3Label": "les leaders suivis",
+    "cta": "Débloquer pour 3,99€/mois"
+  },
+  "download": {
+    "title": "Prêt à passer au niveau supérieur ?",
+    "subtitle": "Télécharge MotherFlame gratuitement. Pas de compte, pas de pub, pas de prise de tête.",
+    "cta": "Télécharger pour Windows",
+    "note": "Gratuit · Windows 10/11 · Aucune installation requise"
+  },
+  "pricing": {
+    "metaTitle": "Tarifs — MotherFlame",
+    "metaDescription": "Débloque l'onglet Méta pour 3,99€/mois.",
+    "title": "Débloquer l'onglet Méta",
+    "subtitle": "Un abonnement, accès complet aux données méta de la communauté.",
+    "planName": "Accès Méta",
+    "price": "3,99€",
+    "period": "/mois",
+    "features": [
+      "Classement mondial des leaders avec win rates pondérés",
+      "Taux de jeu et données de popularité",
+      "Détail Premier / Deuxième tour par leader",
+      "Top 25 matchups adverses par leader",
+      "Decklists populaires des meilleurs joueurs",
+      "Mis à jour quotidiennement depuis +1M de parties",
+      "Clé de licence instantanée par email",
+      "Annulation à tout moment"
+    ],
+    "cta": "S'abonner — 3,99€/mois",
+    "note": "Paiement sécurisé via Stripe. Annulation depuis ton portail Stripe à tout moment.",
+    "freeTitle": "Tout le reste est gratuit",
+    "freeFeatures": [
+      "Tracking des parties et statistiques de win rate",
+      "Historique complet tour par tour",
+      "Matrice des matchups contre tous les leaders",
+      "Mode overlay"
+    ]
+  },
+  "footer": {
+    "tagline": "Le tracker OPTCG fait par des joueurs, pour des joueurs.",
+    "links": {
+      "pricing": "Tarifs",
+      "download": "Télécharger",
+      "support": "Support"
+    },
+    "copyright": "MotherFlame. Tous droits réservés."
+  },
+  "common": {
+    "scaffoldOk": "Scaffold terminé · Étape 1 prête",
+    "languageSwitcher": "Langue"
+  }
+}

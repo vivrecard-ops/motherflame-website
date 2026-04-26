@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "title": "MotherFlame — Track",
+    "description": "Track your One Piece Card Game matches, analyze your performance, and master the meta."
+  },
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "download": "Free Download"
+  },
+  "hero": {
+    "badge": "Built for OPTCG players",
+    "title": "Track your matches.",
+    "titleAccent": "Master the meta.",
+    "subtitle": "MotherFlame is the free desktop app for One\u00A0Piece\u00A0TCG players. Log every game, analyze your stats, and crush your opponents with data.",
+    "downloadCta": "Download for Windows — Free",
+    "downloadNote": "Windows 10/11 · No account needed",
+    "pricingCta": "Unlock Meta tab",
+    "pricingNote": "€3.99/mo · Cancel anytime"
+  },
+  "stats": {
+    "matches": "matches tracked by the community",
+    "free": "Free forever",
+    "platform": "Windows"
+  },
+  "showcase": {
+    "title": "See it in action",
+    "subtitle": "Four tabs. Every detail of your game, right in front of you.",
+    "unlockCta": "Unlock the Meta tab to access this"
+  },
+  "features": {
+    "title": "Everything you need to improve",
+    "subtitle": "Four powerful tools in one app. Three are completely free.",
+    "items": [
+      {
+        "icon": "bar-chart",
+        "title": "Match Statistics",
+        "description": "Spot where you struggle, whether going first or second or against specific leaders, and track your real progress game after game. Add personal notes after each match and review your sessions to know exactly what to work on.",
+        "badge": "Free"
+      },
+      {
+        "icon": "scroll",
+        "title": "Turn-by-Turn History",
+        "description": "Review your starting hand to see if your opening was playable, then go through the full game with every card deployed and every attack logged. Your end-of-game notes are saved alongside so you can actually learn from each session.",
+        "badge": "Free"
+      },
+      {
+        "icon": "grid",
+        "title": "Matchup Matrix",
+        "description": "Get a full picture of your results against every leader in the meta. See your going-first and going-second win rates separately for each matchup, and quickly identify which ones to prioritize in your practice.",
+        "badge": "Free"
+      },
+      {
+        "icon": "crown",
+        "title": "Meta Stats",
+        "description": "Powered by over 1,000,000 matches and updated every day, the Meta tab tells you which decks rule the current meta and gives you the most-played decklists for each leader. Copy any list with one click and paste it straight into the simulator to test it yourself.",
+        "badge": "Meta"
+      }
+    ]
+  },
+  "metaTeaser": {
+    "label": "META TAB — PREMIUM",
+    "title": "The competitive edge.",
+    "subtitle": "The Meta tab aggregates data from over 1,000,000 matches played on the simulator. Know which leaders are dominant, how to beat them, and what decklists the best players run.",
+    "stat1Value": "1,063,064+",
+    "stat1Label": "matches aggregated",
+    "stat2Value": "Updated",
+    "stat2Label": "daily",
+    "stat3Value": "All",
+    "stat3Label": "leaders tracked",
+    "cta": "Unlock for €3.99/month"
+  },
+  "download": {
+    "title": "Ready to level up?",
+    "subtitle": "Download MotherFlame for free. No account needed, no ads, no nonsense.",
+    "cta": "Download for Windows",
+    "note": "Free · Windows 10/11 · No install required"
+  },
+  "pricing": {
+    "metaTitle": "Pricing — MotherFlame",
+    "metaDescription": "Unlock the Meta tab for €3.99/month.",
+    "title": "Unlock the Meta tab",
+    "subtitle": "One subscription, full access to community meta data.",
+    "planName": "Meta Access",
+    "price": "€3.99",
+    "period": "/month",
+    "features": [
+      "Global leader leaderboard with weighted win rates",
+      "Play rate & popularity data",
+      "Going 1st vs Going 2nd breakdown per leader",
+      "Top 25 opponent matchups per leader",
+      "Popular decklists from top players",
+      "Updated daily from 1M+ matches",
+      "Instant license key by email",
+      "Cancel anytime"
+    ],
+    "cta": "Subscribe — €3.99/month",
+    "note": "Secure payment via Stripe. Cancel anytime from your Stripe portal.",
+    "freeTitle": "Everything else is free",
+    "freeFeatures": [
+      "Match tracking & win rate stats",
+      "Full turn-by-turn game history",
+      "Matchup matrix vs all leaders",
+      "Overlay mode"
+    ]
+  },
+  "footer": {
+    "tagline": "The OPTCG tracker built by players, for players.",
+    "links": {
+      "pricing": "Pricing",
+      "download": "Download",
+      "support": "Support"
+    },
+    "copyright": "MotherFlame. All rights reserved."
+  },
+  "common": {
+    "scaffoldOk": "Scaffold complete · Étape 1 ready",
+    "languageSwitcher": "Language"
+  }
+}

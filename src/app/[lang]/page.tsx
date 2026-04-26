@@ -1,0 +1,232 @@
+import Link from "next/link";
+import Image from "next/image";
+import { Check, ChevronDown, Crown } from "lucide-react";
+import { headers, cookies } from "next/headers";
+import { getDictionary } from "@/i18n/dictionaries";
+import type { Locale } from "@/i18n/config";
+import { AppShowcase } from "@/components/AppShowcase";
+import { CheckoutButton } from "@/components/CheckoutButton";
+import { CURRENCIES, getCurrency, type Currency } from "@/lib/currency";
+
+async function detectCurrency(): Promise<Currency> {
+  const h = await headers();
+  const fromHeader = h.get("x-currency");
+  if (fromHeader === "EUR" || fromHeader === "USD") return fromHeader;
+
+  const c = await cookies();
+  const fromCookie = c.get("mf-currency")?.value;
+  if (fromCookie === "EUR" || fromCookie === "USD") return fromCookie;
+
+  const country = h.get("x-vercel-ip-country");
+  return getCurrency(country);
+}
+
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ lang: Locale }>;
+}) {
+  const { lang } = await params;
+  const [dict, currency] = await Promise.all([getDictionary(lang), detectCurrency()]);
+  const cur = CURRENCIES[currency];
+  const period = lang === "fr" ? cur.period_fr : cur.period_en;
+  const p = dict.pricing;
+
+  return (
+    <>
+      {/* HERO */}
+      <section className="relative flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
+        {/* Background glow */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="h-[600px] w-[600px] rounded-full bg-fuchsia-900/20 blur-3xl" />
+        </div>
+
+        {/* Background app screenshots — desktop only */}
+        <div className="pointer-events-none absolute inset-0 hidden overflow-hidden lg:block">
+          <div
+            className="absolute -left-16 top-[12%] w-[520px] -rotate-6 overflow-hidden rounded-2xl opacity-30"
+            style={{
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 38%, black 100%)",
+              maskImage: "linear-gradient(to right, transparent 0%, black 38%, black 100%)",
+            }}
+          >
+            <Image src="/matchups.png" alt="" width={1307} height={860} className="w-full" />
+          </div>
+
+          <div
+            className="absolute -right-16 top-[18%] w-[520px] rotate-6 overflow-hidden rounded-2xl opacity-30"
+            style={{
+              WebkitMaskImage: "linear-gradient(to left, transparent 0%, black 38%, black 100%)",
+              maskImage: "linear-gradient(to left, transparent 0%, black 38%, black 100%)",
+            }}
+          >
+            <Image src="/meta.jpg" alt="" width={1307} height={860} className="w-full" />
+          </div>
+
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 75% 80% at 50% 50%, transparent 10%, rgba(0,0,0,0.55) 60%, black 90%)",
+            }}
+          />
+        </div>
+
+        <div className="relative flex flex-col items-center gap-6">
+          <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-zinc-300">
+            {dict.hero.badge}
+          </span>
+
+          <h1 className="max-w-3xl text-5xl font-bold tracking-tight sm:text-7xl">
+            <span className="block text-white">{dict.hero.title}</span>
+            <span className="block bg-gradient-to-br from-fuchsia-400 via-pink-500 to-rose-400 bg-clip-text text-transparent">
+              {dict.hero.titleAccent}
+            </span>
+          </h1>
+
+          <p className="max-w-xl text-lg leading-relaxed text-zinc-400">
+            {dict.hero.subtitle}
+          </p>
+
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-6">
+            <div className="flex flex-col items-center gap-1.5">
+              <a
+                href="#download"
+                className="inline-flex h-12 items-center rounded-full bg-white px-7 text-sm font-semibold text-black transition hover:bg-zinc-100"
+              >
+                {dict.hero.downloadCta}
+              </a>
+              <span className="text-xs text-zinc-500">{dict.hero.downloadNote}</span>
+            </div>
+            <div className="flex flex-col items-center gap-1.5">
+              <a
+                href="#pricing"
+                className="inline-flex h-12 items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-7 text-sm font-semibold text-white shadow-lg shadow-pink-900/30 transition hover:from-pink-400 hover:to-rose-400"
+              >
+                <Crown size={15} />
+                {dict.hero.pricingCta}
+              </a>
+              <span className="text-xs text-zinc-500">{dict.hero.pricingNote}</span>
+            </div>
+          </div>
+        </div>
+
+        <a
+          href="#features"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-zinc-600 transition hover:text-zinc-400"
+          aria-label="Scroll down"
+        >
+          <ChevronDown size={28} />
+        </a>
+
+        <div className="relative mt-20 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-zinc-500">
+          <span>
+            <strong className="text-white">1,063,064+</strong>{" "}
+            {dict.stats.matches}
+          </span>
+          <span className="hidden sm:block text-zinc-700">·</span>
+          <span className="text-emerald-400">{dict.stats.free}</span>
+          <span className="hidden sm:block text-zinc-700">·</span>
+          <span>{dict.stats.platform}</span>
+        </div>
+      </section>
+
+      {/* FEATURES WITH ALTERNATING SCREENSHOTS */}
+      <AppShowcase lang={lang} dict={dict} />
+
+      {/* PRICING */}
+      <section id="pricing" className="px-6 py-24">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl font-bold text-white sm:text-4xl">{p.title}</h2>
+            <p className="mt-4 text-zinc-400">{p.subtitle}</p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* FREE CARD */}
+            <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-8">
+              <div className="mb-6">
+                <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-400">
+                  {p.freeTitle}
+                </span>
+                <div className="mt-4 flex items-end gap-1">
+                  <span className="text-4xl font-bold text-white">{cur.symbol}0</span>
+                  <span className="mb-1 text-zinc-500">{period}</span>
+                </div>
+              </div>
+              <ul className="flex flex-col gap-3">
+                {p.freeFeatures.map((feature) => (
+                  <li key={feature} className="flex items-start gap-3 text-sm text-zinc-400">
+                    <Check size={16} className="mt-0.5 shrink-0 text-emerald-400" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="#download"
+                className="mt-8 flex h-11 w-full items-center justify-center rounded-full border border-white/10 text-sm font-semibold text-white transition hover:bg-white/5"
+              >
+                {dict.nav.download}
+              </a>
+            </div>
+
+            {/* PREMIUM CARD */}
+            <div className="relative overflow-hidden rounded-2xl border border-fuchsia-500/30 bg-gradient-to-br from-fuchsia-950/60 via-zinc-950 to-zinc-950 p-8">
+              <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-fuchsia-600/10 blur-3xl" />
+              <div className="relative">
+                <div className="mb-6">
+                  <span className="rounded-full bg-fuchsia-500/20 px-2.5 py-0.5 text-xs font-semibold text-fuchsia-300">
+                    {p.planName}
+                  </span>
+                  <div className="mt-4 flex items-end gap-1">
+                    <span className="text-4xl font-bold text-white">
+                      {cur.symbol}{cur.amount}
+                    </span>
+                    <span className="mb-1 text-zinc-500">{period}</span>
+                  </div>
+                  <span className="mt-1 inline-block rounded bg-white/5 px-2 py-0.5 text-xs text-zinc-500">
+                    {currency}
+                  </span>
+                </div>
+
+                <ul className="flex flex-col gap-3">
+                  {p.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-3 text-sm text-zinc-300">
+                      <Check size={16} className="mt-0.5 shrink-0 text-fuchsia-400" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+
+                <CheckoutButton currency={currency} label={p.cta} />
+                <p className="mt-3 text-center text-xs text-zinc-600">{p.note}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DOWNLOAD CTA */}
+      <section id="download" className="px-6 py-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold text-white sm:text-4xl">
+            {dict.download.title}
+          </h2>
+          <p className="mt-4 text-zinc-400">{dict.download.subtitle}</p>
+
+          <a
+            href="https://github.com/placeholder/motherflame/releases/latest"
+            className="mt-8 inline-flex h-14 items-center justify-center rounded-full bg-white px-10 text-base font-semibold text-black transition hover:bg-zinc-100"
+          >
+            {dict.download.cta}
+          </a>
+
+          <p className="mt-4 flex items-center justify-center gap-2 text-sm text-zinc-600">
+            <Check size={14} className="text-emerald-500" />
+            {dict.download.note}
+          </p>
+        </div>
+      </section>
+    </>
+  );
+}
