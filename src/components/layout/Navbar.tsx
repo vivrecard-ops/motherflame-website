@@ -18,7 +18,6 @@ export function Navbar({
           <Image src="/logo.svg" alt="MotherFlame logo" width={22} height={26} />
           <span className="font-semibold tracking-tight text-white">
             MotherFlame
-            <span className="text-zinc-500">.gg</span>
           </span>
         </Link>
 
