@@ -12,7 +12,7 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
             <Link href={`/${lang}`} className="flex items-center gap-2">
               <Image src="/logo.svg" alt="MotherFlame logo" width={18} height={22} />
               <span className="font-semibold text-white">
-                MotherFlame<span className="text-zinc-500">.gg</span>
+                MotherFlame
               </span>
             </Link>
             <p className="text-sm text-zinc-600">{dict.footer.tagline}</p>
@@ -25,7 +25,7 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
             <Link href="#download" className="transition hover:text-white">
               {dict.footer.links.download}
             </Link>
-            <a href="mailto:support@optcg-motherflame.net" className="transition hover:text-white">
+            <a href="mailto:support@optcg-motherflame.com" className="transition hover:text-white">
               {dict.footer.links.support}
             </a>
           </nav>

@@ -19,7 +19,7 @@ export async function sendLicenseEmail(email: string, licenseKey: string) {
         <!-- Header -->
         <tr>
           <td style="background:linear-gradient(135deg,#581c87,#831843);padding:32px 40px;">
-            <p style="margin:0;font-size:22px;font-weight:700;color:#fff;letter-spacing:-0.5px;">MotherFlame<span style="color:#d4d4d8;">.gg</span></p>
+            <p style="margin:0;font-size:22px;font-weight:700;color:#fff;letter-spacing:-0.5px;">MotherFlame</p>
             <p style="margin:8px 0 0;font-size:13px;color:#e879f9;">Meta Access · Activated</p>
           </td>
         </tr>
