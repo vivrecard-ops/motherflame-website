@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendLicenseEmail(email: string, licenseKey: string) {
   const { error } = await resend.emails.send({
-    from: "MotherFlame <onboarding@resend.dev>",
+    from: "MotherFlame <noreply@optcg-motherflame.com>",
     to: email,
     subject: "Your MotherFlame Meta Access license key",
     html: `
