@@ -50,7 +50,7 @@ export async function sendLicenseEmail(email: string, licenseKey: string) {
         <tr>
           <td style="padding:20px 40px;border-top:1px solid #27272a;">
             <p style="margin:0;font-size:12px;color:#3f3f46;text-align:center;">
-              © MotherFlame · optcg-motherflame.net
+              © MotherFlame · optcg-motherflame.com
             </p>
           </td>
         </tr>
