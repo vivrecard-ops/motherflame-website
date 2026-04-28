@@ -3,8 +3,8 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendLicenseEmail(email: string, licenseKey: string) {
-  await resend.emails.send({
-    from: "MotherFlame <noreply@optcg-motherflame.com>",
+  const { error } = await resend.emails.send({
+    from: "MotherFlame <onboarding@resend.dev>",
     to: email,
     subject: "Your MotherFlame Meta Access license key",
     html: `
@@ -62,4 +62,8 @@ export async function sendLicenseEmail(email: string, licenseKey: string) {
 </html>
     `,
   });
+  if (error) {
+    console.error("[email] resend error", error);
+    throw new Error(`Email send failed: ${JSON.stringify(error)}`);
+  }
 }
