@@ -37,6 +37,25 @@ export async function POST(request: NextRequest) {
 
         if (!email) break;
 
+        // Idempotency: Stripe retries webhook delivery on any non-2xx (or on
+        // timeout) for up to 3 days.  Without this guard a retry would
+        // generate a SECOND license key for the same subscription and email
+        // the customer twice.  We key on stripe_subscription_id, which is
+        // guaranteed unique per Stripe subscription.
+        if (subscriptionId) {
+          const { data: existing } = await supabaseAdmin
+            .from("licenses")
+            .select("id")
+            .eq("stripe_subscription_id", subscriptionId)
+            .maybeSingle();
+          if (existing) {
+            console.log(
+              `[webhook] checkout.session.completed: license already exists for ${subscriptionId}, skipping`,
+            );
+            break;
+          }
+        }
+
         // Fetch subscription to get period end (may be null in test fixtures)
         let periodEnd: string | null = null;
         if (subscriptionId) {

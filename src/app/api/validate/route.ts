@@ -43,7 +43,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ valid: false, error: "License not found" }, { status: 404 });
     }
 
-    const valid = data.status === "active";
+    // Defence-in-depth: even if the row's status is still "active", refuse
+    // access once the paid period has lapsed.  Status alone is unreliable
+    // because Stripe webhooks can be missed (network blip, retry storm, etc.)
+    // — the period_end is an authoritative cut-off written by the same
+    // webhook that flipped the status, so checking both leaves no window
+    // where a cancelled subscription keeps working.
+    const now = Date.now();
+    const periodEnd = data.current_period_end
+      ? Date.parse(data.current_period_end)
+      : null;
+    const periodOk = periodEnd === null || (Number.isFinite(periodEnd) && periodEnd > now);
+
+    const valid = data.status === "active" && periodOk;
 
     return NextResponse.json({
       valid,
