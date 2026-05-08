@@ -1,10 +1,25 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { supabaseAdmin as _supabaseAdmin } from "@/lib/supabase/admin";
+import { checkValidateRateLimit } from "@/lib/rate-limit";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const supabaseAdmin = _supabaseAdmin as any;
 
 export async function POST(request: NextRequest) {
+  // Per-IP rate limit BEFORE reading the body.  This is the primary defence
+  // against brute-force enumeration of license keys: without it, an attacker
+  // could try millions of keys per minute until they hit a valid one.
+  const rl = await checkValidateRateLimit(request);
+  if (rl.rateLimited) {
+    return NextResponse.json(
+      { valid: false, error: "Too many requests" },
+      {
+        status:  429,
+        headers: { "Retry-After": String(rl.retryAfter) },
+      },
+    );
+  }
+
   let licenseKey: string | undefined;
 
   try {

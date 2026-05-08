@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { supabaseAdmin as _supabaseAdmin } from "@/lib/supabase/admin";
+import { checkPortalRateLimit } from "@/lib/rate-limit";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const supabaseAdmin = _supabaseAdmin as any;
@@ -19,6 +20,21 @@ const supabaseAdmin = _supabaseAdmin as any;
  *   Stripe Dashboard → Settings → Billing → Customer portal
  */
 export async function POST(request: NextRequest) {
+  // Per-IP rate limit BEFORE reading the body.  This endpoint reaches Stripe
+  // (paid API) on every successful call — without rate limiting, an attacker
+  // could rack up Stripe charges + spam our customer accounts.  Also blocks
+  // license-key enumeration via the "License not found" error path.
+  const rl = await checkPortalRateLimit(request);
+  if (rl.rateLimited) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      {
+        status:  429,
+        headers: { "Retry-After": String(rl.retryAfter) },
+      },
+    );
+  }
+
   let licenseKey: string | undefined;
 
   try {

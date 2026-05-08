@@ -214,12 +214,18 @@ export default async function HomePage({
           </h2>
           <p className="mt-4 text-zinc-400">{dict.download.subtitle}</p>
 
-          <a
-            href="https://github.com/placeholder/motherflame/releases/latest"
-            className="mt-8 inline-flex h-14 items-center justify-center rounded-full bg-white px-10 text-base font-semibold text-black transition hover:bg-zinc-100"
-          >
-            {dict.download.cta}
-          </a>
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <a
+              href="https://github.com/vivrecard-ops/motherflame-tracker/releases/download/v1.9.0/MotherFlame_v1.9.0.zip"
+              className="inline-flex h-14 items-center justify-center gap-3 rounded-full bg-white px-10 text-base font-semibold text-black transition hover:bg-zinc-100"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 16l-5-5 1.41-1.41L11 13.17V4h2v9.17l2.59-2.58L17 11l-5 5zm-6 2h12v2H6v-2z"/>
+              </svg>
+              {dict.download.cta}
+            </a>
+            <span className="text-xs text-zinc-600">v1.9.0 · 91.5 MB · .zip</span>
+          </div>
 
           <p className="mt-4 flex items-center justify-center gap-2 text-sm text-zinc-600">
             <Check size={14} className="text-emerald-500" />
