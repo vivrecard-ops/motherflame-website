@@ -23,9 +23,9 @@ import { NextResponse } from "next/server";
 
 // ── Update these three values on every release ───────────────────────────────
 
-const VERSION      = "1.8.1";
-const DOWNLOAD_URL = ""; // e.g. "https://github.com/you/repo/releases/download/v1.8.1/MotherFlame_v1.8.1.zip"
-const SHA256       = ""; // SHA-256 hex digest of the zip file
+const VERSION      = "1.9.0";
+const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-tracker/releases/download/v1.9.0/MotherFlame_v1.9.0.zip";
+const SHA256       = "DD0B3B330EB4DA375313C29C6EFDA134402A2A51404944DCDE8B8907146DF57A";
 const CHANGELOG    = [
   "Billing portal accessible from Settings",
   "Settings panel redesigned",
