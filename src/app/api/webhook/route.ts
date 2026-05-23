@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
 
         const licenseKey = generateLicenseKey();
 
-        await supabaseAdmin.from("licenses").insert({
+        const { error: insertError } = await supabaseAdmin.from("licenses").insert({
           license_key: licenseKey,
           email,
           stripe_customer_id: customerId ?? null,
@@ -82,6 +82,12 @@ export async function POST(request: NextRequest) {
           status: "active",
           current_period_end: periodEnd,
         });
+
+        if (insertError) {
+          console.error("[webhook] Supabase insert error:", insertError);
+          // Return 500 so Stripe retries the webhook delivery.
+          return NextResponse.json({ error: "Database error" }, { status: 500 });
+        }
 
         await sendLicenseEmail(email, licenseKey);
 

@@ -148,11 +148,18 @@ export async function checkValidateRateLimit(
 ): Promise<RateLimitResult> {
   const limiter = getValidateLimiter();
   if (!limiter) return { rateLimited: false, retryAfter: 0 };
-  const { success, reset } = await limiter.limit(getClientIp(request));
-  return {
-    rateLimited: !success,
-    retryAfter:  Math.max(0, Math.ceil((reset - Date.now()) / 1000)),
-  };
+  try {
+    const { success, reset } = await limiter.limit(getClientIp(request));
+    return {
+      rateLimited: !success,
+      retryAfter:  Math.max(0, Math.ceil((reset - Date.now()) / 1000)),
+    };
+  } catch (err) {
+    // Fail open: if Redis is unreachable, allow the request through rather
+    // than blocking legitimate users.
+    console.warn("[rate-limit] Redis error, failing open:", err);
+    return { rateLimited: false, retryAfter: 0 };
+  }
 }
 
 /**
@@ -164,9 +171,14 @@ export async function checkPortalRateLimit(
 ): Promise<RateLimitResult> {
   const limiter = getPortalLimiter();
   if (!limiter) return { rateLimited: false, retryAfter: 0 };
-  const { success, reset } = await limiter.limit(getClientIp(request));
-  return {
-    rateLimited: !success,
-    retryAfter:  Math.max(0, Math.ceil((reset - Date.now()) / 1000)),
-  };
+  try {
+    const { success, reset } = await limiter.limit(getClientIp(request));
+    return {
+      rateLimited: !success,
+      retryAfter:  Math.max(0, Math.ceil((reset - Date.now()) / 1000)),
+    };
+  } catch (err) {
+    console.warn("[rate-limit] Redis error, failing open:", err);
+    return { rateLimited: false, retryAfter: 0 };
+  }
 }
