@@ -109,7 +109,9 @@
     "links": {
       "pricing": "Tarifs",
       "download": "Télécharger",
-      "support": "Support"
+      "support": "Support",
+      "privacy": "Confidentialité",
+      "terms": "CGU"
     },
     "copyright": "MotherFlame. Tous droits réservés."
   },

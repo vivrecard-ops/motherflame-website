@@ -18,7 +18,7 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
             <p className="text-sm text-zinc-600">{dict.footer.tagline}</p>
           </div>
 
-          <nav className="flex items-center gap-6 text-sm text-zinc-500">
+          <nav className="flex flex-wrap items-center gap-6 text-sm text-zinc-500">
             <Link href={`/${lang}/pricing`} className="transition hover:text-white">
               {dict.footer.links.pricing}
             </Link>
@@ -28,6 +28,12 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
             <a href="mailto:support@optcg-motherflame.com" className="transition hover:text-white">
               {dict.footer.links.support}
             </a>
+            <Link href={`/${lang}/privacy`} className="transition hover:text-white">
+              {dict.footer.links.privacy}
+            </Link>
+            <Link href={`/${lang}/terms`} className="transition hover:text-white">
+              {dict.footer.links.terms}
+            </Link>
           </nav>
         </div>
 
