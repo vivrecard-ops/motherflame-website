@@ -74,7 +74,16 @@
     "title": "Prêt à passer au niveau supérieur ?",
     "subtitle": "Télécharge MotherFlame gratuitement. Pas de compte, pas de pub, pas de prise de tête.",
     "cta": "Télécharger pour Windows",
-    "note": "Gratuit · Windows 10/11 · Aucune installation requise"
+    "note": "Gratuit · Windows 10/11 · Installation guidée",
+    "altCta": "Préfères un .zip sans installation ?",
+    "stepsTitle": "Comment l'installer",
+    "steps": [
+      "Télécharge le fichier .exe ci-dessus",
+      "Lance-le et suis les étapes (pas besoin de droits administrateur)",
+      "MotherFlame se lance automatiquement à la fin de l'installation"
+    ],
+    "smartscreenTitle": "Un message « Windows a protégé votre ordinateur » apparaît ?",
+    "smartscreenBody": "C'est normal pour les applications indépendantes sans certificat payant. Clique sur « Informations complémentaires », puis sur « Exécuter quand même »."
   },
   "pricing": {
     "metaTitle": "Tarifs — MotherFlame",

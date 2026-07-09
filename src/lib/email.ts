@@ -40,8 +40,9 @@ export async function sendLicenseEmail(email: string, licenseKey: string) {
             </p>
 
             <p style="margin:0;font-size:13px;color:#52525b;line-height:1.6;">
-              Your subscription renews automatically each month. You can cancel anytime from your
-              <a href="https://billing.stripe.com" style="color:#a855f7;text-decoration:none;">Stripe billing portal</a>.
+              Your subscription renews automatically each month. You can cancel anytime from
+              <strong style="color:#a1a1aa;">MotherFlame → Settings → License → Manage subscription</strong>,
+              which opens your personal Stripe billing portal.
             </p>
           </td>
         </tr>

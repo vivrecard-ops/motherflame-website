@@ -89,7 +89,19 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: "Database error" }, { status: 500 });
         }
 
-        await sendLicenseEmail(email, licenseKey);
+        // Email failure must NOT fail the webhook: the payment succeeded and
+        // the license row now exists, so a 500 here makes Stripe retry — but
+        // the idempotency guard above would then skip this whole block and
+        // the email would never be re-sent. Log loudly for manual follow-up
+        // instead (the key is recoverable from the Supabase row).
+        try {
+          await sendLicenseEmail(email, licenseKey);
+        } catch (emailErr) {
+          console.error(
+            `[webhook] LICENSE EMAIL FAILED for ${email} (key ${licenseKey}) — send manually:`,
+            emailErr,
+          );
+        }
 
         break;
       }

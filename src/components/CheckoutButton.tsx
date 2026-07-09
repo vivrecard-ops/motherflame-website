@@ -5,9 +5,10 @@ import { useState } from "react";
 interface Props {
   currency: string;
   label: string;
+  lang: string;
 }
 
-export function CheckoutButton({ currency, label }: Props) {
+export function CheckoutButton({ currency, label, lang }: Props) {
   const [loading, setLoading] = useState(false);
 
   async function handleClick() {
@@ -16,7 +17,7 @@ export function CheckoutButton({ currency, label }: Props) {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currency }),
+        body: JSON.stringify({ currency, lang }),
       });
       const { url } = await res.json();
       if (url) window.location.href = url;

@@ -74,7 +74,16 @@
     "title": "Ready to level up?",
     "subtitle": "Download MotherFlame for free. No account needed, no ads, no nonsense.",
     "cta": "Download for Windows",
-    "note": "Free · Windows 10/11 · No install required"
+    "note": "Free · Windows 10/11 · Guided install",
+    "altCta": "Prefer a .zip with no installer?",
+    "stepsTitle": "How to install it",
+    "steps": [
+      "Download the .exe file above",
+      "Run it and follow the steps (no admin rights needed)",
+      "MotherFlame launches automatically once setup finishes"
+    ],
+    "smartscreenTitle": "Seeing a \"Windows protected your PC\" message?",
+    "smartscreenBody": "That's normal for indie apps without a paid certificate. Click \"More info\", then \"Run anyway\"."
   },
   "pricing": {
     "metaTitle": "Pricing — MotherFlame",

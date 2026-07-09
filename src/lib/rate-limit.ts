@@ -77,6 +77,7 @@ function getRedis(): Redis | null {
 
 let _validateLimiter: Ratelimit | null = null;
 let _portalLimiter:   Ratelimit | null = null;
+let _checkoutLimiter: Ratelimit | null = null;
 
 function getValidateLimiter(): Ratelimit | null {
   if (_validateLimiter) return _validateLimiter;
@@ -102,6 +103,22 @@ function getPortalLimiter(): Ratelimit | null {
     analytics: false,
   });
   return _portalLimiter;
+}
+
+function getCheckoutLimiter(): Ratelimit | null {
+  if (_checkoutLimiter) return _checkoutLimiter;
+  const redis = getRedis();
+  if (!redis) return null;
+  // Checkout is a manual user action (clicking "Subscribe").  10/min per IP
+  // is generous for humans; anything beyond is a script spamming Stripe
+  // session creation.
+  _checkoutLimiter = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(10, "1 m"),
+    prefix:  "rl:checkout",
+    analytics: false,
+  });
+  return _checkoutLimiter;
 }
 
 // ── IP extraction ─────────────────────────────────────────────────────────
@@ -157,6 +174,27 @@ export async function checkValidateRateLimit(
   } catch (err) {
     // Fail open: if Redis is unreachable, allow the request through rather
     // than blocking legitimate users.
+    console.warn("[rate-limit] Redis error, failing open:", err);
+    return { rateLimited: false, retryAfter: 0 };
+  }
+}
+
+/**
+ * Check the rate limit for `/api/checkout`.  See checkValidateRateLimit
+ * for behaviour notes.
+ */
+export async function checkCheckoutRateLimit(
+  request: NextRequest | Request,
+): Promise<RateLimitResult> {
+  const limiter = getCheckoutLimiter();
+  if (!limiter) return { rateLimited: false, retryAfter: 0 };
+  try {
+    const { success, reset } = await limiter.limit(getClientIp(request));
+    return {
+      rateLimited: !success,
+      retryAfter:  Math.max(0, Math.ceil((reset - Date.now()) / 1000)),
+    };
+  } catch (err) {
     console.warn("[rate-limit] Redis error, failing open:", err);
     return { rateLimited: false, retryAfter: 0 };
   }

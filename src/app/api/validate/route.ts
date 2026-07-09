@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
   try {
     const { data, error } = await supabaseAdmin
       .from("licenses")
-      .select("license_key, status, current_period_end, email")
+      .select("license_key, status, current_period_end")
       .eq("license_key", licenseKey.trim().toUpperCase())
       .maybeSingle();
 

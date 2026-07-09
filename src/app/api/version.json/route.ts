@@ -23,15 +23,12 @@ import { NextResponse } from "next/server";
 
 // ── Update these three values on every release ───────────────────────────────
 
-const VERSION      = "1.9.0";
-const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-tracker/releases/download/v1.9.0/MotherFlame_v1.9.0.zip";
-const SHA256       = "DD0B3B330EB4DA375313C29C6EFDA134402A2A51404944DCDE8B8907146DF57A";
+const VERSION      = "1.9.17";
+const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.17/MotherFlame_v1.9.17.zip";
+const SHA256       = "DB908FE8060CE406A09CAC5E6DF8E1C40E11A980011F35A3AB1163CE11F462D1";
 const CHANGELOG    = [
-  "Billing portal accessible from Settings",
-  "Settings panel redesigned",
-  "Security: license cache integrity check",
-  "Fix: overlay auto-refresh at game end",
-  "Fix: update checker URL",
+  "Fix: the Overlay toggle button on the dashboard could silently do nothing",
+  "This was a regression from the previous ghost-window fix - it now correctly finds the overlay window again",
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -50,7 +47,7 @@ export async function GET() {
         "Access-Control-Allow-Origin": "*",
         // Cache for 5 minutes — short enough to deliver updates promptly,
         // long enough to not hammer the serverless function on every startup.
-        "Cache-Control": "public, max-age=300, s-maxage=300",
+        "Cache-Control": "public, max-age=60, s-maxage=60",
       },
     },
   );
