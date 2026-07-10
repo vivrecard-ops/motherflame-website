@@ -23,12 +23,12 @@ import { NextResponse } from "next/server";
 
 // ── Update these three values on every release ───────────────────────────────
 
-const VERSION      = "1.9.17";
-const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.17/MotherFlame_v1.9.17.zip";
-const SHA256       = "DB908FE8060CE406A09CAC5E6DF8E1C40E11A980011F35A3AB1163CE11F462D1";
+const VERSION      = "1.9.18";
+const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.18/MotherFlame_v1.9.18.zip";
+const SHA256       = "1FA351426BBE36C405EDAF54030040F913940891217B3CA9AC4B5DA72BA57537";
 const CHANGELOG    = [
-  "Fix: the Overlay toggle button on the dashboard could silently do nothing",
-  "This was a regression from the previous ghost-window fix - it now correctly finds the overlay window again",
+  "Fix: matches were no longer tracked since simulator 1.41 (the game changed its log format)",
+  "New fallback reads the result from the saved combat log itself - future simulator wording changes will not break tracking",
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
