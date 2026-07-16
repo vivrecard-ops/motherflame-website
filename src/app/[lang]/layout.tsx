@@ -6,6 +6,7 @@ import { locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -56,6 +57,7 @@ export default async function RootLayout({
         <Navbar lang={lang as Locale} dict={dict} />
         <main className="pt-14">{children}</main>
         <Footer lang={lang as Locale} dict={dict} />
+        <Analytics />
       </body>
     </html>
   );
