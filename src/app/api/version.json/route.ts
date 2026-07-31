@@ -23,12 +23,13 @@ import { NextResponse } from "next/server";
 
 // ── Update these three values on every release ───────────────────────────────
 
-const VERSION      = "1.9.18";
-const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.18/MotherFlame_v1.9.18.zip";
-const SHA256       = "1FA351426BBE36C405EDAF54030040F913940891217B3CA9AC4B5DA72BA57537";
+const VERSION      = "1.9.19";
+const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.19/MotherFlame_v1.9.19.zip";
+const SHA256       = "209C78D4B7353168A013D7301849FDC1B4903B4B9F996E678242815B9C6E3190";
 const CHANGELOG    = [
-  "Fix: matches were no longer tracked since simulator 1.41 (the game changed its log format)",
-  "New fallback reads the result from the saved combat log itself - future simulator wording changes will not break tracking",
+  "Fix: some users got a crash on startup - SSL certificate verify failed",
+  "The app now trusts both the Windows certificate store and its own bundled certificate list",
+  "Crashes are now logged so problems can be diagnosed faster",
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
