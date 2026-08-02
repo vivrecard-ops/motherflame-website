@@ -99,6 +99,27 @@ export default async function HomePage({
               </a>
               <span className="text-xs text-zinc-500">{dict.hero.downloadNote}</span>
             </div>
+
+            {/* Mac — same coming-soon placeholder as the #download section.
+                Disabled <button>, never a styled link, so it cannot be
+                clicked, tabbed to, or announced as available. */}
+            <div className="flex flex-col items-center gap-1.5">
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                className="inline-flex h-12 cursor-not-allowed items-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 text-sm font-semibold text-zinc-500"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M16.365 1.43c0 1.14-.47 2.24-1.23 3.04-.82.87-2.16 1.54-3.27 1.45-.13-1.09.42-2.25 1.15-3.02.82-.87 2.26-1.51 3.35-1.47zM20.7 17.1c-.56 1.29-.83 1.87-1.55 3.01-1 1.6-2.42 3.59-4.18 3.6-1.56.02-1.96-1.02-4.08-1.01-2.12.01-2.56 1.03-4.12 1.01-1.76-.01-3.1-1.81-4.1-3.4-2.8-4.47-3.1-9.72-1.37-12.51 1.23-1.98 3.17-3.14 5-3.14 1.86 0 3.03 1.02 4.57 1.02 1.49 0 2.4-1.02 4.55-1.02 1.63 0 3.35.89 4.58 2.42-4.02 2.2-3.37 7.94.7 10.02z"/>
+                </svg>
+                {dict.download.macCta}
+              </button>
+              <span className="text-xs text-fuchsia-300/80">
+                {dict.download.macNote}
+              </span>
+            </div>
+
             <div className="flex flex-col items-center gap-1.5">
               <a
                 href="#pricing"
