@@ -8,6 +8,15 @@ import { AppShowcase } from "@/components/AppShowcase";
 import { CheckoutButton } from "@/components/CheckoutButton";
 import { CURRENCIES, getCurrency, type Currency } from "@/lib/currency";
 
+// macOS build links.  Kept as constants because release.ps1 rewrites only the
+// Windows href/size strings it knows about — the Mac ones are updated by hand,
+// so they live in one obvious place instead of being buried twice in the JSX.
+const MAC_VERSION = "1.9.20";
+const MAC_DMG_URL =
+  `https://github.com/vivrecard-ops/motherflame-releases/releases/download/v${MAC_VERSION}/MotherFlame-mac-${MAC_VERSION}.dmg`;
+const MAC_ZIP_URL =
+  `https://github.com/vivrecard-ops/motherflame-releases/releases/download/v${MAC_VERSION}/MotherFlame-mac-${MAC_VERSION}.zip`;
+
 async function detectCurrency(): Promise<Currency> {
   const h = await headers();
   const fromHeader = h.get("x-currency");
@@ -100,22 +109,20 @@ export default async function HomePage({
               <span className="text-xs text-zinc-500">{dict.hero.downloadNote}</span>
             </div>
 
-            {/* Mac — same coming-soon placeholder as the #download section.
-                Disabled <button>, never a styled link, so it cannot be
-                clicked, tabbed to, or announced as available. */}
+            {/* Mac — peer of the Windows button, same visual weight: the
+                visitor picks by their own OS, not by which one we promote. */}
             <div className="flex flex-col items-center gap-1.5">
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                className="inline-flex h-12 cursor-not-allowed items-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 text-sm font-semibold text-zinc-500"
+              <a
+                href={MAC_DMG_URL}
+                download
+                className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-7 text-sm font-semibold text-black transition hover:bg-zinc-100"
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M16.365 1.43c0 1.14-.47 2.24-1.23 3.04-.82.87-2.16 1.54-3.27 1.45-.13-1.09.42-2.25 1.15-3.02.82-.87 2.26-1.51 3.35-1.47zM20.7 17.1c-.56 1.29-.83 1.87-1.55 3.01-1 1.6-2.42 3.59-4.18 3.6-1.56.02-1.96-1.02-4.08-1.01-2.12.01-2.56 1.03-4.12 1.01-1.76-.01-3.1-1.81-4.1-3.4-2.8-4.47-3.1-9.72-1.37-12.51 1.23-1.98 3.17-3.14 5-3.14 1.86 0 3.03 1.02 4.57 1.02 1.49 0 2.4-1.02 4.55-1.02 1.63 0 3.35.89 4.58 2.42-4.02 2.2-3.37 7.94.7 10.02z"/>
                 </svg>
                 {dict.download.macCta}
-              </button>
-              <span className="text-xs text-fuchsia-300/80">
+              </a>
+              <span className="text-xs text-zinc-500">
                 {dict.download.macNote}
               </span>
             </div>
@@ -250,24 +257,25 @@ export default async function HomePage({
                 </a>
               </div>
 
-              {/* Mac — placeholder until the macOS build ships. Rendered as a
-                  disabled button, not a link: it must read as "planned" and be
-                  unclickable, including for keyboard and screen-reader users. */}
               <div className="flex flex-col items-center gap-2">
-                <button
-                  type="button"
-                  disabled
-                  aria-disabled="true"
-                  className="inline-flex h-14 cursor-not-allowed items-center justify-center gap-3 rounded-full border border-white/15 bg-white/5 px-10 text-base font-semibold text-zinc-500"
+                <a
+                  href={MAC_DMG_URL}
+                  className="inline-flex h-14 items-center justify-center gap-3 rounded-full bg-white px-10 text-base font-semibold text-black transition hover:bg-zinc-100"
                 >
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M16.365 1.43c0 1.14-.47 2.24-1.23 3.04-.82.87-2.16 1.54-3.27 1.45-.13-1.09.42-2.25 1.15-3.02.82-.87 2.26-1.51 3.35-1.47zM20.7 17.1c-.56 1.29-.83 1.87-1.55 3.01-1 1.6-2.42 3.59-4.18 3.6-1.56.02-1.96-1.02-4.08-1.01-2.12.01-2.56 1.03-4.12 1.01-1.76-.01-3.1-1.81-4.1-3.4-2.8-4.47-3.1-9.72-1.37-12.51 1.23-1.98 3.17-3.14 5-3.14 1.86 0 3.03 1.02 4.57 1.02 1.49 0 2.4-1.02 4.55-1.02 1.63 0 3.35.89 4.58 2.42-4.02 2.2-3.37 7.94.7 10.02z"/>
                   </svg>
                   {dict.download.macCta}
-                </button>
-                <span className="rounded-full bg-fuchsia-500/10 px-3 py-1 text-xs font-medium text-fuchsia-300">
-                  {dict.download.macNote}
+                </a>
+                <span className="text-xs text-zinc-600">
+                  v{MAC_VERSION} · 150 MB · .dmg
                 </span>
+                <a
+                  href={MAC_ZIP_URL}
+                  className="text-xs text-zinc-500 underline-offset-2 hover:text-zinc-300 hover:underline"
+                >
+                  {dict.download.macAltCta}
+                </a>
               </div>
             </div>
             <span className="text-xs text-zinc-600">v1.9.20 · 68 MB · .exe</span>

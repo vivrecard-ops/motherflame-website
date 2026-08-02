@@ -85,7 +85,8 @@
     "smartscreenTitle": "Seeing a \"Windows protected your PC\" message?",
     "smartscreenBody": "That's normal for indie apps without a paid certificate. Click \"More info\", then \"Run anyway\".",
     "macCta": "Download for Mac",
-    "macNote": "Coming soon"
+    "macNote": "macOS · No account needed",
+    "macAltCta": "Prefer a .zip instead?"
   },
   "pricing": {
     "metaTitle": "Pricing — MotherFlame",

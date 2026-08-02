@@ -85,7 +85,8 @@
     "smartscreenTitle": "Un message « Windows a protégé votre ordinateur » apparaît ?",
     "smartscreenBody": "C'est normal pour les applications indépendantes sans certificat payant. Clique sur « Informations complémentaires », puis sur « Exécuter quand même ».",
     "macCta": "Télécharger pour Mac",
-    "macNote": "Bientôt disponible"
+    "macNote": "macOS · Aucun compte requis",
+    "macAltCta": "Préfères un .zip ?"
   },
   "pricing": {
     "metaTitle": "Tarifs — MotherFlame",
