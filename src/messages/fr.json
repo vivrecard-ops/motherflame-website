@@ -12,7 +12,7 @@
     "badge": "Pensé pour les joueurs OPTCG",
     "title": "Traque tes parties.",
     "titleAccent": "Maîtrise la méta.",
-    "subtitle": "MotherFlame est l'app desktop gratuite pour les joueurs de One\u00A0Piece\u00A0TCG. Enregistre chaque partie, analyse tes stats et écrase tes adversaires avec des données.",
+    "subtitle": "MotherFlame est l'app desktop gratuite pour les joueurs de One Piece TCG. Enregistre chaque partie, analyse tes stats et écrase tes adversaires avec des données.",
     "downloadCta": "Télécharger pour Windows — Gratuit",
     "downloadNote": "Windows 10/11 · Aucun compte requis",
     "pricingCta": "Débloquer l'onglet Méta",
@@ -83,7 +83,9 @@
       "MotherFlame se lance automatiquement à la fin de l'installation"
     ],
     "smartscreenTitle": "Un message « Windows a protégé votre ordinateur » apparaît ?",
-    "smartscreenBody": "C'est normal pour les applications indépendantes sans certificat payant. Clique sur « Informations complémentaires », puis sur « Exécuter quand même »."
+    "smartscreenBody": "C'est normal pour les applications indépendantes sans certificat payant. Clique sur « Informations complémentaires », puis sur « Exécuter quand même ».",
+    "macCta": "Télécharger pour Mac",
+    "macNote": "Bientôt disponible"
   },
   "pricing": {
     "metaTitle": "Tarifs — MotherFlame",

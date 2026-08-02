@@ -216,15 +216,39 @@ export default async function HomePage({
           <p className="mt-4 text-zinc-400">{dict.download.subtitle}</p>
 
           <div className="mt-8 flex flex-col items-center gap-3">
-            <a
-              href="https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.20/MotherFlame_Setup_v1.9.20.exe"
-              className="inline-flex h-14 items-center justify-center gap-3 rounded-full bg-white px-10 text-base font-semibold text-black transition hover:bg-zinc-100"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 16l-5-5 1.41-1.41L11 13.17V4h2v9.17l2.59-2.58L17 11l-5 5zm-6 2h12v2H6v-2z"/>
-              </svg>
-              {dict.download.cta}
-            </a>
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:justify-center">
+              <div className="flex flex-col items-center gap-2">
+                <a
+                  href="https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.20/MotherFlame_Setup_v1.9.20.exe"
+                  className="inline-flex h-14 items-center justify-center gap-3 rounded-full bg-white px-10 text-base font-semibold text-black transition hover:bg-zinc-100"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12 16l-5-5 1.41-1.41L11 13.17V4h2v9.17l2.59-2.58L17 11l-5 5zm-6 2h12v2H6v-2z"/>
+                  </svg>
+                  {dict.download.cta}
+                </a>
+              </div>
+
+              {/* Mac — placeholder until the macOS build ships. Rendered as a
+                  disabled button, not a link: it must read as "planned" and be
+                  unclickable, including for keyboard and screen-reader users. */}
+              <div className="flex flex-col items-center gap-2">
+                <button
+                  type="button"
+                  disabled
+                  aria-disabled="true"
+                  className="inline-flex h-14 cursor-not-allowed items-center justify-center gap-3 rounded-full border border-white/15 bg-white/5 px-10 text-base font-semibold text-zinc-500"
+                >
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M16.365 1.43c0 1.14-.47 2.24-1.23 3.04-.82.87-2.16 1.54-3.27 1.45-.13-1.09.42-2.25 1.15-3.02.82-.87 2.26-1.51 3.35-1.47zM20.7 17.1c-.56 1.29-.83 1.87-1.55 3.01-1 1.6-2.42 3.59-4.18 3.6-1.56.02-1.96-1.02-4.08-1.01-2.12.01-2.56 1.03-4.12 1.01-1.76-.01-3.1-1.81-4.1-3.4-2.8-4.47-3.1-9.72-1.37-12.51 1.23-1.98 3.17-3.14 5-3.14 1.86 0 3.03 1.02 4.57 1.02 1.49 0 2.4-1.02 4.55-1.02 1.63 0 3.35.89 4.58 2.42-4.02 2.2-3.37 7.94.7 10.02z"/>
+                  </svg>
+                  {dict.download.macCta}
+                </button>
+                <span className="rounded-full bg-fuchsia-500/10 px-3 py-1 text-xs font-medium text-fuchsia-300">
+                  {dict.download.macNote}
+                </span>
+              </div>
+            </div>
             <span className="text-xs text-zinc-600">v1.9.20 · 68 MB · .exe</span>
             <a
               href="https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.20/MotherFlame_v1.9.20.zip"
