@@ -7,12 +7,32 @@ const supabaseAdmin = _supabaseAdmin as any;
 // Always fresh — this is a live dashboard, never a cached build artifact.
 export const dynamic = "force-dynamic";
 
+type Platform = "windows" | "mac";
+
+/**
+ * Map a download_stats.asset value to (platform, isInstaller).
+ *
+ * /api/keepalive writes "windows_installer" / "windows_zip" / "mac_installer"
+ * / "mac_zip" going forward.  Rows snapshotted before the Mac build existed
+ * used the un-qualified "installer" / "zip" — those all predate any Mac
+ * release, so they can only ever mean Windows.
+ */
+function classify(asset: string): { platform: Platform; installer: boolean } | null {
+  if (asset === "installer") return { platform: "windows", installer: true };
+  if (asset === "zip") return { platform: "windows", installer: false };
+  if (asset === "windows_installer") return { platform: "windows", installer: true };
+  if (asset === "windows_zip") return { platform: "windows", installer: false };
+  if (asset === "mac_installer") return { platform: "mac", installer: true };
+  if (asset === "mac_zip") return { platform: "mac", installer: false };
+  return null;
+}
+
 /**
  * GET /stats?k=<STATS_SECRET>
  *
  * Private growth dashboard for the owner: download counts (snapshotted daily
- * into download_stats by /api/keepalive) and active licenses.  Not linked
- * anywhere; access requires the STATS_SECRET query key.  Wrong or missing
+ * into download_stats by /api/keepalive) and active licenses. Not linked
+ * anywhere; access requires the STATS_SECRET query key. Wrong or missing
  * key → 404 so the page's existence isn't advertised.
  */
 export default async function StatsPage({
@@ -42,44 +62,73 @@ export default async function StatsPage({
   };
   const stats = (rows ?? []) as Row[];
 
-  // Per-day totals for installer downloads (all versions summed).
-  const byDay = new Map<string, number>();
+  // Per-day installer totals, split by platform.
+  const byDay: Record<Platform, Map<string, number>> = {
+    windows: new Map(),
+    mac: new Map(),
+  };
   for (const r of stats) {
-    if (r.asset !== "installer") continue;
-    byDay.set(r.snapshot_date, (byDay.get(r.snapshot_date) ?? 0) + r.downloads);
+    const c = classify(r.asset);
+    if (!c || !c.installer) continue;
+    const m = byDay[c.platform];
+    m.set(r.snapshot_date, (m.get(r.snapshot_date) ?? 0) + r.downloads);
   }
-  const days = [...byDay.entries()].sort(([a], [b]) => a.localeCompare(b));
-  const totalNow = days.length ? days[days.length - 1][1] : 0;
 
-  // Daily deltas (new installs per day) — needs ≥2 snapshots.
-  const deltas = days.slice(1).map(([date, total], i) => ({
-    date,
-    delta: Math.max(0, total - days[i][1]),
-  }));
-  const today = days.length ? days[days.length - 1][0] : null;
-  const todayDelta = deltas.length ? deltas[deltas.length - 1].delta : null;
+  const allDates = [
+    ...new Set([...byDay.windows.keys(), ...byDay.mac.keys()]),
+  ].sort();
 
-  // Latest per-version installer counts (top 5).
-  const latestDate = today;
+  // Carry the last known total forward onto dates where a platform has no
+  // row yet (e.g. Mac has no snapshot before its first release date).
+  function series(platform: Platform) {
+    let last = 0;
+    return allDates.map((d) => {
+      const v = byDay[platform].get(d);
+      if (v !== undefined) last = v;
+      return last;
+    });
+  }
+  const winSeries = series("windows");
+  const macSeries = series("mac");
+
+  const winTotal = winSeries.length ? winSeries[winSeries.length - 1] : 0;
+  const macTotal = macSeries.length ? macSeries[macSeries.length - 1] : 0;
+
+  function deltas(s: number[]) {
+    return s.slice(1).map((v, i) => Math.max(0, v - s[i]));
+  }
+  const winDeltas = deltas(winSeries);
+  const macDeltas = deltas(macSeries);
+  const winToday = winDeltas.length ? winDeltas[winDeltas.length - 1] : null;
+  const macToday = macDeltas.length ? macDeltas[macDeltas.length - 1] : null;
+
+  // Per-version installer counts, latest snapshot date, split by platform.
+  const latestDate = allDates.length ? allDates[allDates.length - 1] : null;
   const perVersion = stats
-    .filter((r) => r.snapshot_date === latestDate && r.asset === "installer")
+    .filter((r) => r.snapshot_date === latestDate)
+    .map((r) => ({ ...r, c: classify(r.asset) }))
+    .filter((r) => r.c?.installer)
     .sort((a, b) => b.downloads - a.downloads)
-    .slice(0, 5);
+    .slice(0, 8);
 
-  // Simple inline SVG: cumulative line over snapshot days.
+  // Simple inline SVG: two cumulative lines (Windows, Mac) over shared days.
   const W = 640;
   const H = 200;
   const PAD = 30;
-  const maxY = Math.max(totalNow, 10);
-  const pts = days.map(([, total], i) => {
-    const x =
-      days.length === 1
-        ? W / 2
-        : PAD + (i * (W - 2 * PAD)) / (days.length - 1);
-    const y = H - PAD - (total / maxY) * (H - 2 * PAD);
-    return { x, y };
-  });
-  const polyline = pts.map((p) => `${p.x},${p.y}`).join(" ");
+  const maxY = Math.max(winTotal, macTotal, 10);
+  function toPoints(s: number[]) {
+    return s.map((v, i) => {
+      const x =
+        allDates.length === 1 ? W / 2 : PAD + (i * (W - 2 * PAD)) / (allDates.length - 1);
+      const y = H - PAD - (v / maxY) * (H - 2 * PAD);
+      return { x, y };
+    });
+  }
+  const winPts = toPoints(winSeries);
+  const macPts = toPoints(macSeries);
+  const winLine = winPts.map((p) => `${p.x},${p.y}`).join(" ");
+  const macLine = macPts.map((p) => `${p.x},${p.y}`).join(" ");
+  const hasMacData = macTotal > 0 || byDay.mac.size > 0;
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -90,13 +139,17 @@ export default async function StatsPage({
 
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="text-xs text-zinc-500">Installations totales</p>
-          <p className="mt-1 text-2xl font-bold text-white">{totalNow}</p>
+          <p className="text-xs text-zinc-500">🪟 Windows — total</p>
+          <p className="mt-1 text-2xl font-bold text-white">{winTotal}</p>
+          <p className="mt-0.5 text-xs text-zinc-500">
+            {winToday === null ? "—" : `+${winToday} aujourd'hui`}
+          </p>
         </div>
         <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="text-xs text-zinc-500">Aujourd&apos;hui</p>
-          <p className="mt-1 text-2xl font-bold text-white">
-            {todayDelta === null ? "—" : `+${todayDelta}`}
+          <p className="text-xs text-zinc-500">🍎 Mac — total</p>
+          <p className="mt-1 text-2xl font-bold text-white">{macTotal}</p>
+          <p className="mt-0.5 text-xs text-zinc-500">
+            {macToday === null ? "—" : `+${macToday} aujourd'hui`}
           </p>
         </div>
         <div className="rounded-xl border border-white/10 bg-white/5 p-4">
@@ -107,15 +160,27 @@ export default async function StatsPage({
         </div>
         <div className="rounded-xl border border-white/10 bg-white/5 p-4">
           <p className="text-xs text-zinc-500">Jours de données</p>
-          <p className="mt-1 text-2xl font-bold text-white">{days.length}</p>
+          <p className="mt-1 text-2xl font-bold text-white">{allDates.length}</p>
         </div>
       </div>
 
       <div className="mt-8 rounded-xl border border-white/10 bg-white/5 p-4">
-        <p className="mb-2 text-xs text-zinc-500">
-          Installations cumulées (.exe, toutes versions)
-        </p>
-        {days.length < 2 ? (
+        <div className="mb-2 flex items-center justify-between">
+          <p className="text-xs text-zinc-500">Installations cumulées</p>
+          <div className="flex items-center gap-3 text-xs text-zinc-500">
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block h-2 w-2 rounded-full bg-fuchsia-400" />
+              Windows
+            </span>
+            {hasMacData && (
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block h-2 w-2 rounded-full bg-sky-400" />
+                Mac
+              </span>
+            )}
+          </div>
+        </div>
+        {allDates.length < 2 ? (
           <p className="py-8 text-center text-sm text-zinc-500">
             La courbe apparaîtra à partir du 2ᵉ jour de données — le cron
             enregistre un point chaque nuit.
@@ -125,82 +190,93 @@ export default async function StatsPage({
             viewBox={`0 0 ${W} ${H}`}
             className="w-full"
             role="img"
-            aria-label="Courbe des installations cumulées"
+            aria-label="Courbe des installations cumulées, Windows et Mac"
           >
-            <polyline
-              points={polyline}
-              fill="none"
-              stroke="#e879f9"
-              strokeWidth="2"
-            />
-            {pts.map((p, i) => (
-              <g key={i}>
+            <polyline points={winLine} fill="none" stroke="#e879f9" strokeWidth="2" />
+            {hasMacData && (
+              <polyline points={macLine} fill="none" stroke="#38bdf8" strokeWidth="2" />
+            )}
+            {winPts.map((p, i) => (
+              <g key={`w-${i}`}>
                 <circle cx={p.x} cy={p.y} r="3.5" fill="#e879f9" />
-                <text
-                  x={p.x}
-                  y={p.y - 10}
-                  textAnchor="middle"
-                  fontSize="11"
-                  fill="#a1a1aa"
-                >
-                  {days[i][1]}
+                <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize="11" fill="#a1a1aa">
+                  {winSeries[i]}
                 </text>
-                <text
-                  x={p.x}
-                  y={H - 8}
-                  textAnchor="middle"
-                  fontSize="10"
-                  fill="#71717a"
-                >
-                  {days[i][0].slice(5)}
+                <text x={p.x} y={H - 8} textAnchor="middle" fontSize="10" fill="#71717a">
+                  {allDates[i].slice(5)}
                 </text>
               </g>
             ))}
+            {hasMacData &&
+              macPts.map((p, i) => (
+                <g key={`m-${i}`}>
+                  <circle cx={p.x} cy={p.y} r="3.5" fill="#38bdf8" />
+                  {macSeries[i] > 0 && (
+                    <text x={p.x} y={p.y + 16} textAnchor="middle" fontSize="11" fill="#7dd3fc">
+                      {macSeries[i]}
+                    </text>
+                  )}
+                </g>
+              ))}
           </svg>
         )}
       </div>
 
-      {deltas.length > 0 && (
+      {winDeltas.length > 0 && (
         <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4">
           <p className="mb-3 text-xs text-zinc-500">
-            Nouvelles installations par jour
+            Nouvelles installations par jour — 🪟 Windows / 🍎 Mac
           </p>
           <div className="flex flex-col gap-2">
-            {deltas
+            {allDates
+              .slice(1)
+              .map((d, i) => ({ date: d, win: winDeltas[i], mac: macDeltas[i] ?? 0 }))
               .slice(-14)
               .reverse()
-              .map((d) => (
-                <div key={d.date} className="flex items-center gap-3 text-sm">
-                  <span className="w-16 shrink-0 text-zinc-500">
-                    {d.date.slice(5)}
-                  </span>
-                  <div className="h-4 rounded bg-fuchsia-500/70"
-                    style={{
-                      width: `${Math.min(
-                        100,
-                        (d.delta /
-                          Math.max(...deltas.map((x) => x.delta), 1)) *
-                          100,
-                      )}%`,
-                      minWidth: d.delta > 0 ? "4px" : "0",
-                    }}
-                  />
-                  <span className="text-zinc-300">+{d.delta}</span>
-                </div>
-              ))}
+              .map((d) => {
+                const maxDelta = Math.max(...winDeltas, ...macDeltas, 1);
+                return (
+                  <div key={d.date} className="flex items-center gap-3 text-sm">
+                    <span className="w-16 shrink-0 text-zinc-500">{d.date.slice(5)}</span>
+                    <div className="flex flex-1 flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="h-3.5 rounded bg-fuchsia-500/70"
+                          style={{
+                            width: `${Math.min(100, (d.win / maxDelta) * 100)}%`,
+                            minWidth: d.win > 0 ? "4px" : "0",
+                          }}
+                        />
+                        <span className="text-xs text-zinc-400">+{d.win}</span>
+                      </div>
+                      {hasMacData && (
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="h-3.5 rounded bg-sky-500/70"
+                            style={{
+                              width: `${Math.min(100, (d.mac / maxDelta) * 100)}%`,
+                              minWidth: d.mac > 0 ? "4px" : "0",
+                            }}
+                          />
+                          <span className="text-xs text-zinc-400">+{d.mac}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
           </div>
         </div>
       )}
 
       <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4">
-        <p className="mb-3 text-xs text-zinc-500">Par version (installeur)</p>
+        <p className="mb-3 text-xs text-zinc-500">Par version</p>
         <div className="flex flex-col gap-1.5">
           {perVersion.map((r) => (
-            <div
-              key={r.version}
-              className="flex justify-between text-sm text-zinc-300"
-            >
-              <span>{r.version}</span>
+            <div key={r.asset + r.version} className="flex justify-between text-sm text-zinc-300">
+              <span>
+                {r.c?.platform === "mac" ? "🍎" : "🪟"} {r.version}
+              </span>
               <span className="font-semibold text-white">{r.downloads}</span>
             </div>
           ))}

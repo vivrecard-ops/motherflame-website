@@ -76,10 +76,16 @@ export async function GET(request: NextRequest) {
       }>;
       for (const rel of releases) {
         for (const asset of rel.assets) {
+          const platform = asset.name.includes("-mac-") ? "mac" : "windows";
+          const kind = /\.(exe|dmg)$/.test(asset.name) ? "installer" : "zip";
           rows.push({
             snapshot_date: today,
             version: rel.tag_name,
-            asset: asset.name.endsWith(".exe") ? "installer" : "zip",
+            // Platform-qualified so Windows and Mac installers/zips never
+            // collide in the same (date, version, asset) row — older rows
+            // from before the Mac build existed keep their un-qualified
+            // "installer"/"zip" value and just read as "windows" in /stats.
+            asset: `${platform}_${kind}`,
             downloads: asset.download_count,
           });
         }
