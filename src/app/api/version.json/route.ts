@@ -23,13 +23,13 @@ import { NextResponse } from "next/server";
 
 // ── Update these three values on every release ───────────────────────────────
 
-const VERSION      = "1.9.19";
-const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.19/MotherFlame_v1.9.19.zip";
-const SHA256       = "209C78D4B7353168A013D7301849FDC1B4903B4B9F996E678242815B9C6E3190";
+const VERSION      = "1.9.20";
+const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.20/MotherFlame_v1.9.20.zip";
+const SHA256       = "FF39D94D15A71F0893D8F5094CF5E4323D30E74F8EAE6FA28F896B5990B89852";
 const CHANGELOG    = [
-  "Fix: some users got a crash on startup - SSL certificate verify failed",
-  "The app now trusts both the Windows certificate store and its own bundled certificate list",
-  "Crashes are now logged so problems can be diagnosed faster",
+  "Fix: app could crash on first launch on some PCs - SSL certificate error",
+  "The display client is now used directly from the app instead of being downloaded on first launch",
+  "Faster first start and works offline",
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
