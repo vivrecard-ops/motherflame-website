@@ -63,15 +63,37 @@ export default async function StatsPage({
   const stats = (rows ?? []) as Row[];
 
   // Per-day installer totals, split by platform.
+  //
+  // The legacy key ("installer") and the platform-qualified key
+  // ("windows_installer") can both exist for the SAME (date, version): the
+  // day this split shipped, the 3am cron ran under the old code before
+  // deploy, then a later run wrote the new key for that same day. Naively
+  // summing every matching row double-counts that day. Fix: collapse to at
+  // most one count per (date, version, platform, installer|zip) — preferring
+  // the platform-qualified key when both are present, since it is the one
+  // going forward.
+  const bestCount = new Map<string, number>();
+  const keyPriority = new Map<string, number>();
+  for (const r of stats) {
+    const c = classify(r.asset);
+    if (!c) continue;
+    const dedupeKey = `${r.snapshot_date}|${r.version}|${c.platform}|${c.installer}`;
+    const priority = r.asset === "installer" || r.asset === "zip" ? 0 : 1;
+    if (!keyPriority.has(dedupeKey) || priority >= keyPriority.get(dedupeKey)!) {
+      keyPriority.set(dedupeKey, priority);
+      bestCount.set(dedupeKey, r.downloads);
+    }
+  }
+
   const byDay: Record<Platform, Map<string, number>> = {
     windows: new Map(),
     mac: new Map(),
   };
-  for (const r of stats) {
-    const c = classify(r.asset);
-    if (!c || !c.installer) continue;
-    const m = byDay[c.platform];
-    m.set(r.snapshot_date, (m.get(r.snapshot_date) ?? 0) + r.downloads);
+  for (const [dedupeKey, downloads] of bestCount) {
+    const [date, , platform, installer] = dedupeKey.split("|");
+    if (installer !== "true") continue;
+    const m = byDay[platform as Platform];
+    m.set(date, (m.get(date) ?? 0) + downloads);
   }
 
   const allDates = [
@@ -102,12 +124,25 @@ export default async function StatsPage({
   const winToday = winDeltas.length ? winDeltas[winDeltas.length - 1] : null;
   const macToday = macDeltas.length ? macDeltas[macDeltas.length - 1] : null;
 
-  // Per-version installer counts, latest snapshot date, split by platform.
+  // Per-version installer counts for the latest snapshot date, deduped the
+  // same way as byDay above (one row per version+platform, not per asset key).
   const latestDate = allDates.length ? allDates[allDates.length - 1] : null;
-  const perVersion = stats
-    .filter((r) => r.snapshot_date === latestDate)
-    .map((r) => ({ ...r, c: classify(r.asset) }))
-    .filter((r) => r.c?.installer)
+  const perVersionMap = new Map<
+    string,
+    { version: string; platform: Platform; downloads: number; priority: number }
+  >();
+  for (const r of stats) {
+    if (r.snapshot_date !== latestDate) continue;
+    const c = classify(r.asset);
+    if (!c?.installer) continue;
+    const dedupeKey = `${r.version}|${c.platform}`;
+    const priority = r.asset === "installer" ? 0 : 1;
+    const existing = perVersionMap.get(dedupeKey);
+    if (!existing || priority >= existing.priority) {
+      perVersionMap.set(dedupeKey, { version: r.version, platform: c.platform, downloads: r.downloads, priority });
+    }
+  }
+  const perVersion = [...perVersionMap.values()]
     .sort((a, b) => b.downloads - a.downloads)
     .slice(0, 8);
 
@@ -273,9 +308,9 @@ export default async function StatsPage({
         <p className="mb-3 text-xs text-zinc-500">Par version</p>
         <div className="flex flex-col gap-1.5">
           {perVersion.map((r) => (
-            <div key={r.asset + r.version} className="flex justify-between text-sm text-zinc-300">
+            <div key={r.platform + r.version} className="flex justify-between text-sm text-zinc-300">
               <span>
-                {r.c?.platform === "mac" ? "🍎" : "🪟"} {r.version}
+                {r.platform === "mac" ? "🍎" : "🪟"} {r.version}
               </span>
               <span className="font-semibold text-white">{r.downloads}</span>
             </div>
