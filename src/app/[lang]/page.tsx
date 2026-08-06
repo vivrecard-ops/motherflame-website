@@ -100,7 +100,7 @@ export default async function HomePage({
           <div className="mt-2 flex flex-wrap items-center justify-center gap-6">
             <div className="flex flex-col items-center gap-1.5">
               <a
-                href="https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.20/MotherFlame_Setup_v1.9.20.exe"
+                href="https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.21/MotherFlame_Setup_v1.9.21.exe"
                 download
                 className="inline-flex h-12 items-center rounded-full bg-white px-7 text-sm font-semibold text-black transition hover:bg-zinc-100"
               >
@@ -247,7 +247,7 @@ export default async function HomePage({
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:justify-center">
               <div className="flex flex-col items-center gap-2">
                 <a
-                  href="https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.20/MotherFlame_Setup_v1.9.20.exe"
+                  href="https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.21/MotherFlame_Setup_v1.9.21.exe"
                   className="inline-flex h-14 items-center justify-center gap-3 rounded-full bg-white px-10 text-base font-semibold text-black transition hover:bg-zinc-100"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -278,9 +278,9 @@ export default async function HomePage({
                 </a>
               </div>
             </div>
-            <span className="text-xs text-zinc-600">v1.9.20 · 68 MB · .exe</span>
+            <span className="text-xs text-zinc-600">v1.9.21 · 68 MB · .exe</span>
             <a
-              href="https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.20/MotherFlame_v1.9.20.zip"
+              href="https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.21/MotherFlame_v1.9.21.zip"
               className="text-xs text-zinc-500 underline-offset-2 hover:text-zinc-300 hover:underline"
             >
               {dict.download.altCta}

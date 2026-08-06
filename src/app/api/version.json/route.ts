@@ -23,13 +23,12 @@ import { NextResponse } from "next/server";
 
 // ── Update these three values on every release ───────────────────────────────
 
-const VERSION      = "1.9.20";
-const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.20/MotherFlame_v1.9.20.zip";
-const SHA256       = "FF39D94D15A71F0893D8F5094CF5E4323D30E74F8EAE6FA28F896B5990B89852";
+const VERSION      = "1.9.21";
+const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.21/MotherFlame_v1.9.21.zip";
+const SHA256       = "949160E06062D3F7BCC828475ED43353613D1060633C43B41D8F1FEF37D2C99F";
 const CHANGELOG    = [
-  "Fix: app could crash on first launch on some PCs - SSL certificate error",
-  "The display client is now used directly from the app instead of being downloaded on first launch",
-  "Faster first start and works offline",
+  "Fix: the Meta tab showed outdated decklists - it now refreshes daily like the win rates",
+  "Fix: in rare cases only the overlay opened without the dashboard - the app now reports the error instead of hanging",
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
