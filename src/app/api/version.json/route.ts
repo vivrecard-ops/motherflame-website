@@ -23,12 +23,12 @@ import { NextResponse } from "next/server";
 
 // ── Update these three values on every release ───────────────────────────────
 
-const VERSION      = "1.9.21";
-const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.21/MotherFlame_v1.9.21.zip";
-const SHA256       = "949160E06062D3F7BCC828475ED43353613D1060633C43B41D8F1FEF37D2C99F";
+const VERSION      = "1.9.22";
+const DOWNLOAD_URL = "https://github.com/vivrecard-ops/motherflame-releases/releases/download/v1.9.22/MotherFlame_v1.9.22.zip";
+const SHA256       = "C6C35345A18D1E977F62EDAB4A5376BD1F8DB6BA7DC5DBCECBC8C603364C9AC9";
 const CHANGELOG    = [
-  "Fix: the Meta tab showed outdated decklists - it now refreshes daily like the win rates",
-  "Fix: in rare cases only the overlay opened without the dashboard - the app now reports the error instead of hanging",
+  "New: the Meta tab now lets you switch between Standard and OP17 formats",
+  "Your chosen format is remembered and each one keeps its own cache, so switching back is instant",
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
