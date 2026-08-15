@@ -44,15 +44,75 @@ export default async function StatsPage({
   const secret = process.env.STATS_SECRET;
   if (!secret || k !== secret) notFound();
 
-  const { data: rows } = await supabaseAdmin
-    .from("download_stats")
-    .select("snapshot_date, version, asset, downloads")
-    .order("snapshot_date", { ascending: true });
+  // Fetch in pages, bounded to a recent window.
+  //
+  // Supabase enforces a server-side cap of 1000 rows per request that no
+  // client-side .limit() or Range header can raise. The snapshot writes one
+  // row per asset per version per day, so each release widens a day by 4 rows
+  // and the table crossed 1000 after ~25 days. Past that the newest day came
+  // back truncated mid-way through its rows and the page summed the fragment:
+  // Windows read "4" because only 5 of ~20 versions' installer rows arrived.
+  // So: page through explicitly, and bound by date so the number of pages
+  // stays flat as the table keeps growing.
+  const WINDOW_DAYS = 45;
+  const PAGE = 1000;
+  const since = new Date(Date.now() - WINDOW_DAYS * 86_400_000)
+    .toISOString()
+    .slice(0, 10);
 
-  const { count: activeLicenses } = await supabaseAdmin
+  const rows: Array<Record<string, unknown>> = [];
+  for (let from = 0; ; from += PAGE) {
+    const { data: page, error } = await supabaseAdmin
+      .from("download_stats")
+      .select("snapshot_date, version, asset, downloads")
+      .gte("snapshot_date", since)
+      .order("snapshot_date", { ascending: true })
+      .order("version", { ascending: true })
+      .order("asset", { ascending: true })
+      .range(from, from + PAGE - 1);
+    if (error) {
+      console.error("[stats] download_stats page failed", error);
+      break;
+    }
+    if (!page?.length) break;
+    rows.push(...page);
+    if (page.length < PAGE) break;   // last page
+    if (from > 200_000) break;       // hard stop; never loop forever
+  }
+
+  // Licence counts, separated because they answer different questions.
+  // "active" in our table means "has access"; it deliberately includes the
+  // comp keys we issued by hand (no Stripe subscription), which are not
+  // customers and must not be read as revenue.
+  const { data: licRows } = await supabaseAdmin
     .from("licenses")
-    .select("id", { count: "exact", head: true })
-    .eq("status", "active");
+    .select("status, stripe_subscription_id")
+    .limit(10_000);
+
+  type Lic = { status: string; stripe_subscription_id: string | null };
+  const lics = (licRows ?? []) as Lic[];
+  const activeLicenses = lics.filter((l) => l.status === "active").length;
+  const compLicenses = lics.filter(
+    (l) => l.status === "active" && !l.stripe_subscription_id,
+  ).length;
+  const dbPaying = activeLicenses - compLicenses;
+
+  // Ground truth for "how many people are actually paying" comes from Stripe,
+  // not from our mirror of it: our status only changes when a webhook lands,
+  // so a missed or failed delivery leaves a cancelled subscriber marked active
+  // for good (the current_period_end fallback can't catch it either — Stripe's
+  // 2026 API moved that field and we store null). One list call covers every
+  // customer, so this stays a single request no matter how many subscribers
+  // there are. Read-only on purpose: this reports drift, it never rewrites
+  // licence rows, because wrongly flipping one would revoke a paying user.
+  let stripePaying: number | null = null;
+  try {
+    const { stripe } = await import("@/lib/stripe");
+    const subs = await stripe.subscriptions.list({ status: "active", limit: 100 });
+    stripePaying = subs.data.length;
+  } catch (err) {
+    console.error("[stats] Stripe subscription count failed", err);
+  }
 
   type Row = {
     snapshot_date: string;
@@ -188,16 +248,40 @@ export default async function StatsPage({
           </p>
         </div>
         <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="text-xs text-zinc-500">Licences actives</p>
+          <p className="text-xs text-zinc-500">Abonnés payants</p>
           <p className="mt-1 text-2xl font-bold text-fuchsia-400">
-            {activeLicenses ?? "—"}
+            {stripePaying ?? dbPaying}
+          </p>
+          <p className="mt-0.5 text-xs text-zinc-500">
+            {stripePaying === null ? "d'après la base" : "d'après Stripe"}
           </p>
         </div>
         <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="text-xs text-zinc-500">Jours de données</p>
-          <p className="mt-1 text-2xl font-bold text-white">{allDates.length}</p>
+          <p className="text-xs text-zinc-500">Accès totaux</p>
+          <p className="mt-1 text-2xl font-bold text-white">{activeLicenses}</p>
+          <p className="mt-0.5 text-xs text-zinc-500">
+            dont {compLicenses} offerte{compLicenses > 1 ? "s" : ""}
+          </p>
         </div>
       </div>
+
+      {/* Surfaced rather than silently reconciled: a gap means a webhook did
+          not land, and the fix is to look at Stripe's delivery log — not to
+          have this page quietly rewrite licence rows. */}
+      {stripePaying !== null && stripePaying !== dbPaying && (
+        <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
+          <p className="text-sm text-amber-300">
+            Écart détecté : Stripe compte {stripePaying} abonnement
+            {stripePaying > 1 ? "s" : ""} actif{stripePaying > 1 ? "s" : ""}, la
+            base en marque {dbPaying}.
+          </p>
+          <p className="mt-1 text-xs text-amber-300/70">
+            {dbPaying > stripePaying
+              ? "Des licences restent actives alors que l'abonnement a pris fin — un webhook Stripe n'est probablement pas arrivé."
+              : "Des abonnements payants n'ont pas de licence active — vérifiez les webhooks récents."}
+          </p>
+        </div>
+      )}
 
       <div className="mt-8 rounded-xl border border-white/10 bg-white/5 p-4">
         <div className="mb-2 flex items-center justify-between">
