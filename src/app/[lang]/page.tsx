@@ -11,7 +11,7 @@ import { CURRENCIES, getCurrency, type Currency } from "@/lib/currency";
 // macOS build links.  Kept as constants because release.ps1 rewrites only the
 // Windows href/size strings it knows about — the Mac ones are updated by hand,
 // so they live in one obvious place instead of being buried twice in the JSX.
-const MAC_VERSION = "1.9.20";
+const MAC_VERSION = "1.9.31";
 const MAC_DMG_URL =
   `https://github.com/vivrecard-ops/motherflame-releases/releases/download/v${MAC_VERSION}/MotherFlame-mac-${MAC_VERSION}.dmg`;
 const MAC_ZIP_URL =
